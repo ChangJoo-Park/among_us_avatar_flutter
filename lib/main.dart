@@ -184,12 +184,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   quality: 100,
                                 );
                                 Navigator.of(context).pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        const Text('Save avatar successfully'),
-                                  ),
-                                );
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: const Text(
+                                        'Save avatar successfully')));
                               }
                             } catch (e) {
                               print('error: $e');
