@@ -1,0 +1,31 @@
+name: among_us_profile_maker
+description: Among us avatar maker
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path_provider: ^1.6.22
+  smooth_page_indicator: ^0.2.0
+  image_gallery_saver: ^1.6.1
+  permission_handler: ^5.0.1+1
+  esys_flutter_share: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+flutter:
+
+  uses-material-design: true
+  assets:
+    - images/BG/
+    - images/PLAYER/
+    - images/BOTONES/
+    - images/HATS/
+    - images/OUTFITS/
+    - images/PETS/
+    - images/VOTE/
