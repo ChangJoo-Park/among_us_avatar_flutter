@@ -4,11 +4,15 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+FirebaseAnalytics analytics = FirebaseAnalytics();
 
 void main() {
   runApp(MyApp());
@@ -18,6 +22,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       title: 'Among Us Avatar Maker',
       theme: ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,
