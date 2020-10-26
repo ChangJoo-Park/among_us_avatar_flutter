@@ -363,7 +363,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: SmoothPageIndicator(
                   controller: controller,
                   count: 6,
-                  effect: ExpandingDotsEffect(),
+                  effect: ExpandingDotsEffect(activeDotColor: Colors.black87),
                 ),
               ),
             ],
