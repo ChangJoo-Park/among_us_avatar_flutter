@@ -11,10 +11,12 @@ import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -38,12 +40,34 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // ADMOB
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    childDirected: true,
+    nonPersonalizedAds: true,
+  );
+
+  BannerAd _bannerAd;
+  NativeAd _nativeAd;
+  InterstitialAd _interstitialAd;
+  int _coins = 0;
+
+  BannerAd createBannerAd() {
+    return BannerAd(
+      adUnitId: 'ca-app-pub-7164614404138031/4635242833',
+      size: AdSize.smartBanner,
+      targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {
+        print("BannerAd event $event");
+        print(event);
+      },
+    );
+  }
+
   final _formKey = GlobalKey<FormState>();
   GlobalKey _globalKey = new GlobalKey();
   int randomTapCount = 0;
@@ -68,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Image _pet;
   Image _vote;
   String shareMessage = '';
+
   @override
   void initState() {
     _initImages().then((value) {
@@ -75,7 +100,17 @@ class _MyHomePageState extends State<MyHomePage> {
         _load = true;
       });
     });
+    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7164614404138031~2200651188');
+    _bannerAd = createBannerAd()..load()..show(anchorType: AnchorType.bottom);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _nativeAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
   }
 
   Future _initImages() async {
@@ -359,7 +394,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               // 인디케이터
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 55),
                 child: SmoothPageIndicator(
                   controller: controller,
                   count: 6,

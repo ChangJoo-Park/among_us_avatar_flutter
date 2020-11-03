@@ -50,6 +50,7 @@ android {
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
    signingConfigs {
@@ -67,9 +68,14 @@ android {
 
             minifyEnabled true
             useProguard true
-
+            multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dexOptions {
+      jumboMode true
+      javaMaxHeapSize "4g"
     }
 }
 
