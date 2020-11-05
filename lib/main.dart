@@ -104,8 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
         _load = true;
       });
     });
-    FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7164614404138031~2200651188');
-    _bannerAd = createBannerAd()..load()..show(anchorType: AnchorType.bottom);
+    FirebaseAdMob.instance
+        .initialize(appId: 'ca-app-pub-7164614404138031~2200651188');
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show(anchorType: AnchorType.bottom);
     super.initState();
   }
 
@@ -126,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .where((String key) => key.contains('images/BG/'))
         .map((String path) => Image.asset(path))
         .toList();
+    _bg.insert(0, null);
     List<Image> _pl = manifestMap.keys
         .where((String key) => key.contains('images/PLAYER/'))
         .map((String path) => Image.asset(path))
@@ -134,18 +138,22 @@ class _MyHomePageState extends State<MyHomePage> {
         .where((String key) => key.contains('images/OUTFITS/'))
         .map((String path) => Image.asset(path))
         .toList();
+    _of.insert(0, null);
     List<Image> _pt = manifestMap.keys
         .where((String key) => key.contains('images/PETS/'))
         .map((String path) => Image.asset(path))
         .toList();
+    _pt.insert(0, null);
     List<Image> _ht = manifestMap.keys
         .where((String key) => key.contains('images/HATS/'))
         .map((String path) => Image.asset(path))
         .toList();
+    _ht.insert(0, null);
     List<Image> _vt = manifestMap.keys
         .where((String key) => key.contains('images/VOTE/'))
         .map((String path) => Image.asset(path))
         .toList();
+    _vt.insert(0, null);
 
     setState(() {
       _backgrounds = _bg;
@@ -158,12 +166,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  _selectRandomAvatar ({ bool all = false })  async {
+  _selectRandomAvatar({bool all = false}) async {
     setState(() {
       final _random = Random();
       int min = 0;
-      _background =
-          _backgrounds[_random.nextInt(_backgrounds.length - min)];
+      _background = _backgrounds[_random.nextInt(_backgrounds.length - min)];
       _player = _players[_random.nextInt(_players.length - min)];
       if (all) {
         _outfit = _outfits[_random.nextInt(_outfits.length - min)];
@@ -175,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     analytics.logEvent(
       name: 'random',
-      parameters: <String, dynamic>{ 'count': randomTapCount },
+      parameters: <String, dynamic>{'count': randomTapCount},
     );
     try {
       audioCache.play('effect/select.mp3');
@@ -183,6 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -292,9 +300,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SafeArea(
         child: Container(
-        decoration: BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/among_us_hd.png"), fit: BoxFit.cover)),
+                image: AssetImage("images/among_us_hd.png"), fit: BoxFit.cover),
+          ),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Column(
@@ -307,6 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Stack(children: [
@@ -335,19 +345,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     controller: controller,
                     children: [
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
                           itemCount: _backgrounds.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Image image = _backgrounds[index];
+                            Widget image = _backgrounds[index];
                             return GestureDetector(
                               onTap: () => setState(() => _background = image),
-                              child: image,
+                              child:
+                                  Container(color: Colors.white, child: image),
                             );
                           },
                         ),
                       ),
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
                           itemCount: _players.length,
@@ -355,59 +368,76 @@ class _MyHomePageState extends State<MyHomePage> {
                             Image image = _players[index];
                             return GestureDetector(
                               onTap: () => setState(() => _player = image),
-                              child: image,
+                              child:
+                                  Container(color: Colors.white, child: image),
                             );
                           },
                         ),
                       ),
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
                           itemCount: _outfits.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Image image = _outfits[index];
+                            Widget image = _outfits[index];
                             return GestureDetector(
                               onTap: () => setState(() => _outfit = image),
-                              child: image,
+                              child: Container(
+                                color: Colors.white,
+                                child: image,
+                              ),
                             );
                           },
                         ),
                       ),
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
                           itemCount: _hats.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Image image = _hats[index];
+                            Widget image = _hats[index];
                             return GestureDetector(
                               onTap: () => setState(() => _hat = image),
-                              child: image,
+                              child: Container(
+                                color: Colors.white,
+                                child: image,
+                              ),
                             );
                           },
                         ),
                       ),
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
                           itemCount: _pets.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Image image = _pets[index];
+                            Widget image = _pets[index];
                             return GestureDetector(
                               onTap: () => setState(() => _pet = image),
-                              child: image,
+                              child: Container(
+                                color: Colors.white,
+                                child: image,
+                              ),
                             );
                           },
                         ),
                       ),
                       Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
                           itemCount: _votes.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Image image = _votes[index];
+                            Widget image = _votes[index];
                             return GestureDetector(
                               onTap: () => setState(() => _vote = image),
-                              child: image,
+                              child: Container(
+                                color: Colors.white,
+                                child: image,
+                              ),
                             );
                           },
                         ),
