@@ -18,6 +18,8 @@ dependencies:
   firebase_analytics: ^6.0.2
   firebase_admob: ^0.10.1
   audioplayers: ^0.16.2
+  in_app_review: ^1.0.2
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:
