@@ -12,6 +12,8 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
@@ -45,6 +47,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Player
+  AudioCache audioCache = AudioCache();
+
   // ADMOB
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     childDirected: true,
@@ -54,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
   BannerAd _bannerAd;
   NativeAd _nativeAd;
   InterstitialAd _interstitialAd;
-  int _coins = 0;
 
   BannerAd createBannerAd() {
     return BannerAd(
@@ -62,7 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
       size: AdSize.smartBanner,
       targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {
-        print("BannerAd event $event");
         print(event);
       },
     );
@@ -77,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     crossAxisSpacing: 5.0,
     mainAxisSpacing: 5.0,
   );
-  final gridPadding = const EdgeInsets.all(4);
+  final gridPadding = const EdgeInsets.all(16);
   List<Image> _backgrounds = [];
   List<Image> _players = [];
   List<Image> _outfits = [];
@@ -96,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     _initImages().then((value) {
+      _selectRandomAvatar();
       setState(() {
         _load = true;
       });
@@ -154,6 +158,31 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  _selectRandomAvatar ({ bool all = false })  async {
+    setState(() {
+      final _random = Random();
+      int min = 0;
+      _background =
+          _backgrounds[_random.nextInt(_backgrounds.length - min)];
+      _player = _players[_random.nextInt(_players.length - min)];
+      if (all) {
+        _outfit = _outfits[_random.nextInt(_outfits.length - min)];
+        _hat = _hats[_random.nextInt(_hats.length - min)];
+        _pet = _pets[_random.nextInt(_pets.length - min)];
+        _vote = _votes[_random.nextInt(_votes.length - min)];
+        randomTapCount++;
+      }
+    });
+    analytics.logEvent(
+      name: 'random',
+      parameters: <String, dynamic>{ 'count': randomTapCount },
+    );
+    try {
+      audioCache.play('effect/select.mp3');
+    } catch (e) {
+      print(e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,18 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.casino),
             onPressed: () {
-              setState(() {
-                final _random = Random();
-                int min = 0;
-                _background =
-                    _backgrounds[_random.nextInt(_backgrounds.length - min)];
-                _player = _players[_random.nextInt(_players.length - min)];
-                _outfit = _outfits[_random.nextInt(_outfits.length - min)];
-                _hat = _hats[_random.nextInt(_hats.length - min)];
-                _pet = _pets[_random.nextInt(_pets.length - min)];
-                _vote = _votes[_random.nextInt(_votes.length - min)];
-                randomTapCount++;
-              });
+              _selectRandomAvatar(all: true);
               if (randomTapCount % 5 == 0) {
                 print('광고 나와야지');
               }
@@ -229,6 +247,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                     content: const Text(
                                         'Save avatar successfully')));
+
+                                analytics.logEvent(name: 'save');
                               }
                             } catch (e) {
                               print('error: $e');
@@ -248,6 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   'image/png',
                                   text:
                                       '$shareMessage\nhttps://bit.ly/3omY7hn');
+                              analytics.logEvent(name: 'share');
 
                               Navigator.of(context).pop();
                             } catch (e) {
@@ -271,6 +292,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SafeArea(
         child: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("images/among_us_hd.png"), fit: BoxFit.cover)),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Column(
