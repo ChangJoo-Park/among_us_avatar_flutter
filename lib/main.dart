@@ -313,11 +313,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: RepaintBoundary(
                   key: _globalKey,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Stack(children: [
                       if (!_load) Center(child: CircularProgressIndicator()),
