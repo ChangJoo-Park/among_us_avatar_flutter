@@ -1,27 +1,45 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:audioplayers/audio_cache.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:paginate_firestore/paginate_firestore.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:http/http.dart' as http;
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
-void main() {
+int adActionCount = 0;
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,8 +47,15 @@ class MyApp extends StatelessWidget {
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
       title: 'Among Us Avatar Maker',
-      theme: ThemeData(
+      theme: ThemeData.from(
+        colorScheme: const ColorScheme.light(),
+      ).copyWith(
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          },
+        ),
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
       debugShowCheckedModeBanner: false,
@@ -46,14 +71,53 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  PageController pageController = PageController();
+  List<Widget> _page = [];
+  @override
+  void initState() {
+    _page = [
+      MakerView(
+        key: UniqueKey(),
+        onFeedUploaded: () {
+          pageController.jumpToPage(1);
+        },
+      ),
+      FeedView(key: UniqueKey())
+    ];
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      body: PageView.builder(
+        controller: pageController,
+        itemCount: 2,
+        itemBuilder: (BuildContext context, int index) {
+          return _page[index];
+        },
+      ),
+    );
+  }
+}
+
+class MakerView extends StatefulWidget {
+  MakerView({key, this.onFeedUploaded}) : super(key: key);
+  final VoidCallback onFeedUploaded;
+  @override
+  _MakerViewState createState() => _MakerViewState();
+}
+
+class _MakerViewState extends State<MakerView> {
   // Player
   AudioCache audioCache = AudioCache();
 
   // ADMOB
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-    childDirected: true,
-    nonPersonalizedAds: true,
-  );
+      childDirected: true,
+      nonPersonalizedAds: true,
+      testDevices: <String>['516599cf-81f4-4d34-8579-f8bb846c21ef']);
 
   BannerAd _bannerAd;
   NativeAd _nativeAd;
@@ -66,6 +130,16 @@ class _MyHomePageState extends State<MyHomePage> {
       targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {
         print(event);
+      },
+    );
+  }
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+      adUnitId: InterstitialAd.testAdUnitId,
+      targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {
+        print("InterstitialAd event $event");
       },
     );
   }
@@ -105,9 +179,10 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     FirebaseAdMob.instance
         .initialize(appId: 'ca-app-pub-7164614404138031~2200651188');
-    _bannerAd = createBannerAd()
-      ..load()
-      ..show(anchorType: AnchorType.bottom);
+    _bannerAd = createBannerAd()..load();
+    _bannerAd.show(
+        anchorType: AnchorType.bottom,
+        anchorOffset: _bannerAd.size.height.toDouble());
     super.initState();
   }
 
@@ -177,16 +252,18 @@ class _MyHomePageState extends State<MyHomePage> {
         _pet = _pets[_random.nextInt(_pets.length - min)];
         _vote = _votes[_random.nextInt(_votes.length - min)];
         randomTapCount++;
+        try {
+          audioCache.play('effect/select.mp3');
+        } catch (e) {
+          print(e);
+        }
       }
     });
-    analytics.logEvent(
-      name: 'random',
-      parameters: <String, dynamic>{'count': randomTapCount},
-    );
-    try {
-      audioCache.play('effect/select.mp3');
-    } catch (e) {
-      print(e);
+    if (kReleaseMode) {
+      analytics.logEvent(
+        name: 'random',
+        parameters: <String, dynamic>{'count': randomTapCount},
+      );
     }
   }
 
@@ -201,9 +278,6 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.casino),
             onPressed: () {
               _selectRandomAvatar(all: true);
-              if (randomTapCount % 5 == 0) {
-                print('광고 나와야지');
-              }
             },
           ),
           IconButton(
@@ -254,9 +328,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                     content: const Text(
                                         'Save avatar successfully')));
-
-                                analytics.logEvent(name: 'save');
+                                if (kReleaseMode) {
+                                  analytics.logEvent(name: 'save');
+                                }
                               }
+                              showInterstitialAd();
                             } catch (e) {
                               print('error: $e');
                             }
@@ -269,12 +345,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             try {
                               _formKey.currentState.save();
                               await Share.file(
-                                  'avatar',
-                                  '${DateTime.now()}.png',
-                                  byteData.buffer.asUint8List(),
-                                  'image/png',
-                                  text:
-                                      '$shareMessage\nhttps://bit.ly/3omY7hn');
+                                      'avatar',
+                                      '${DateTime.now()}.png',
+                                      byteData.buffer.asUint8List(),
+                                      'image/png',
+                                      text:
+                                          '$shareMessage\nhttps://bit.ly/3omY7hn')
+                                  .then((value) {
+                                showInterstitialAd();
+                              });
                               analytics.logEvent(name: 'share');
 
                               Navigator.of(context).pop();
@@ -283,10 +362,42 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                           },
                         ),
-                        FlatButton(
-                            child: Text('Close'),
-                            onPressed: () {
+                        FlatButton.icon(
+                            icon: Icon(Icons.cloud_circle),
+                            label: Text('Feed'),
+                            onPressed: () async {
+                              _formKey.currentState.save();
                               Navigator.of(context).pop();
+                              UserCredential userCredential = await FirebaseAuth
+                                  .instance
+                                  .signInAnonymously();
+                              final fireStorage = FirebaseStorage.instance;
+                              String url =
+                                  '${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
+                              StorageReference ref = fireStorage
+                                  .ref()
+                                  .child('feed')
+                                  .child(userCredential.user.uid)
+                                  .child(url);
+                              File file = await writeToFile(byteData);
+                              StorageTaskSnapshot snapshot =
+                                  await ref.putFile(file).onComplete;
+                              String downloadURL = await ref.getDownloadURL();
+
+                              await FirebaseFirestore.instance
+                                  .collection('feed')
+                                  .add({
+                                'url': downloadURL,
+                                'body': shareMessage,
+                                'uid': userCredential.user.uid,
+                                'timestamp': DateTime.now(),
+                              });
+                              widget.onFeedUploaded();
+                              analytics.logEvent(name: 'feed');
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                  content:
+                                      const Text('Upload Feed successfully')));
+                              showInterstitialAd();
                             }),
                       ],
                     ),
@@ -332,6 +443,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         Container(child: _vote, key: UniqueKey()),
                     ]),
                   ),
+                ),
+              ),
+              // 인디케이터
+              Container(
+                padding: const EdgeInsets.only(top: 20),
+                child: SmoothPageIndicator(
+                  controller: controller,
+                  count: 6,
+                  effect: ExpandingDotsEffect(activeDotColor: Colors.white),
                 ),
               ),
               Expanded(
@@ -443,19 +563,132 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              // 인디케이터
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 55),
-                child: SmoothPageIndicator(
-                  controller: controller,
-                  count: 6,
-                  effect: ExpandingDotsEffect(activeDotColor: Colors.white),
-                ),
-              ),
+              SizedBox(height: 80),
             ],
           ),
         ),
       ),
     );
   }
+
+  showInterstitialAd() {
+    adActionCount++;
+    if (adActionCount % 5 == 0) {
+      createInterstitialAd()
+        ..load()
+        ..show();
+    }
+  }
+}
+
+class FeedView extends StatefulWidget {
+  FeedView({key}) : super(key: key);
+  @override
+  _FeedViewState createState() => _FeedViewState();
+}
+
+class _FeedViewState extends State<FeedView> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      appBar: AppBar(
+        title: Text('Feed'),
+        backgroundColor: Colors.black87,
+      ),
+      body: PaginateFirestore(
+        itemBuilderType:
+            PaginateBuilderType.listView, //Change types accordingly
+        itemBuilder: (index, context, documentSnapshot) {
+          Map<String, dynamic> item = documentSnapshot.data();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: item['url'],
+                    ),
+                    if (item['body'] != null) SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        item['body'] ?? '',
+                        overflow: TextOverflow.visible,
+                      ),
+                    ),
+                    ButtonBar(
+                      children: [
+                        FlatButton.icon(
+                          icon: Icon(Icons.share),
+                          label: Text('Share'),
+                          onPressed: () async {
+                            try {
+                              File file = await urlToFile(item['url']);
+                              await Share.file(
+                                      'avatar',
+                                      '${DateTime.now()}.png',
+                                      file
+                                          .readAsBytesSync()
+                                          .buffer
+                                          .asUint8List(),
+                                      'image/png',
+                                      text: 'https://bit.ly/3omY7hn')
+                                  .then((value) {
+                                analytics.logEvent(name: 'share_from_feed');
+                              });
+                            } catch (e) {
+                              print('error: $e');
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        },
+        query: FirebaseFirestore.instance.collection('feed').orderBy(
+              'timestamp',
+              descending: true,
+            ),
+        onLoaded: (value) {},
+      ),
+    );
+  }
+}
+
+Future<File> writeToFile(ByteData data) async {
+  final buffer = data.buffer;
+  Directory tempDir = await getTemporaryDirectory();
+  String tempPath = tempDir.path;
+  var filePath =
+      tempPath + '/file_01.tmp'; // file_01.tmp is dump file, can be anything
+  return File(filePath)
+      .writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+}
+
+Future<File> urlToFile(String imageUrl) async {
+  // generate random number.
+  var rng = new Random();
+  // get temporary directory of device.
+  Directory tempDir = await getTemporaryDirectory();
+  // get temporary path from temporary directory.
+  String tempPath = tempDir.path;
+  // create a new file in temporary path with random file name.
+  File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
+  // call http.get method and pass imageUrl into it to get response.
+  http.Response response = await http.get(imageUrl);
+  // write bodyBytes received in response to file.
+  await file.writeAsBytes(response.bodyBytes);
+  // now return the file which is created with random name in
+  // temporary directory and image bytes from response is written to // that file.
+  return file;
 }
