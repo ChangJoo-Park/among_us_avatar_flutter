@@ -27,7 +27,34 @@ import 'package:http/http.dart' as http;
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
+// ADMOB
+const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    childDirected: true,
+    nonPersonalizedAds: true,
+    testDevices: <String>['516599cf-81f4-4d34-8579-f8bb846c21ef']);
+
 int adActionCount = 0;
+showInterstitialAd() {
+  adActionCount++;
+  print('adActionCount => $adActionCount');
+  print('need ad => ${adActionCount % 5 == 0}');
+  if (adActionCount % 5 == 0) {
+    createInterstitialAd()
+      ..load()
+      ..show();
+  }
+}
+
+InterstitialAd createInterstitialAd() {
+  return InterstitialAd(
+    adUnitId: 'ca-app-pub-7164614404138031/5433319182',
+    targetingInfo: targetingInfo,
+    listener: (MobileAdEvent event) {
+      print("InterstitialAd event $event");
+    },
+  );
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -113,12 +140,6 @@ class _MakerViewState extends State<MakerView> {
   // Player
   AudioCache audioCache = AudioCache();
 
-  // ADMOB
-  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-      childDirected: true,
-      nonPersonalizedAds: true,
-      testDevices: <String>['516599cf-81f4-4d34-8579-f8bb846c21ef']);
-
   BannerAd _bannerAd;
   NativeAd _nativeAd;
   InterstitialAd _interstitialAd;
@@ -130,16 +151,6 @@ class _MakerViewState extends State<MakerView> {
       targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {
         print(event);
-      },
-    );
-  }
-
-  InterstitialAd createInterstitialAd() {
-    return InterstitialAd(
-      adUnitId: InterstitialAd.testAdUnitId,
-      targetingInfo: targetingInfo,
-      listener: (MobileAdEvent event) {
-        print("InterstitialAd event $event");
       },
     );
   }
@@ -325,9 +336,11 @@ class _MakerViewState extends State<MakerView> {
                                   quality: 100,
                                 );
                                 Navigator.of(context).pop();
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: const Text(
-                                        'Save avatar successfully')));
+                                try {
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: const Text(
+                                          'Save avatar successfully')));
+                                } catch (e) {}
                                 if (kReleaseMode) {
                                   analytics.logEvent(name: 'save');
                                 }
@@ -394,9 +407,11 @@ class _MakerViewState extends State<MakerView> {
                               });
                               widget.onFeedUploaded();
                               analytics.logEvent(name: 'feed');
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                  content:
-                                      const Text('Upload Feed successfully')));
+                              try {
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: const Text(
+                                        'Save avatar successfully')));
+                              } catch (e) {}
                               showInterstitialAd();
                             }),
                       ],
@@ -570,15 +585,6 @@ class _MakerViewState extends State<MakerView> {
       ),
     );
   }
-
-  showInterstitialAd() {
-    adActionCount++;
-    if (adActionCount % 5 == 0) {
-      createInterstitialAd()
-        ..load()
-        ..show();
-    }
-  }
 }
 
 class FeedView extends StatefulWidget {
@@ -641,6 +647,7 @@ class _FeedViewState extends State<FeedView> {
                                       text: 'https://bit.ly/3omY7hn')
                                   .then((value) {
                                 analytics.logEvent(name: 'share_from_feed');
+                                showInterstitialAd();
                               });
                             } catch (e) {
                               print('error: $e');
