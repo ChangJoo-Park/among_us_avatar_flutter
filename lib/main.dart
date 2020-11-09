@@ -27,6 +27,7 @@ import 'package:http/http.dart' as http;
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
+UserCredential userCredential;
 // ADMOB
 const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     childDirected: true,
@@ -36,8 +37,6 @@ const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
 int adActionCount = 0;
 showInterstitialAd() {
   adActionCount++;
-  print('adActionCount => $adActionCount');
-  print('need ad => ${adActionCount % 5 == 0}');
   if (adActionCount % 5 == 0) {
     createInterstitialAd()
       ..load()
@@ -381,9 +380,7 @@ class _MakerViewState extends State<MakerView> {
                             onPressed: () async {
                               _formKey.currentState.save();
                               Navigator.of(context).pop();
-                              UserCredential userCredential = await FirebaseAuth
-                                  .instance
-                                  .signInAnonymously();
+                              UserCredential userCredential = await signIn();
                               final fireStorage = FirebaseStorage.instance;
                               String url =
                                   '${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
@@ -698,4 +695,11 @@ Future<File> urlToFile(String imageUrl) async {
   // now return the file which is created with random name in
   // temporary directory and image bytes from response is written to // that file.
   return file;
+}
+
+signIn() async {
+  if (userCredential == null) {
+    userCredential = await FirebaseAuth.instance.signInAnonymously();
+  }
+  return userCredential;
 }
