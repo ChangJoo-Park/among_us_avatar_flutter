@@ -138,6 +138,8 @@ class MakerView extends StatefulWidget {
 }
 
 class _MakerViewState extends State<MakerView> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
   // Player
   AudioCache audioCache = AudioCache();
 
@@ -282,6 +284,7 @@ class _MakerViewState extends State<MakerView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text('Amoung Us Avatar'),
         backgroundColor: Colors.black87,
@@ -380,6 +383,8 @@ class _MakerViewState extends State<MakerView> {
                             icon: Icon(Icons.cloud_circle),
                             label: Text('Feed'),
                             onPressed: () async {
+                              scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(content: Text('Uploading...')));
                               _formKey.currentState.save();
                               Navigator.of(context).pop();
                               UserCredential userCredential = await signIn();
@@ -392,8 +397,7 @@ class _MakerViewState extends State<MakerView> {
                                   .child(userCredential.user.uid)
                                   .child(url);
                               File file = await writeToFile(byteData);
-                              StorageTaskSnapshot snapshot =
-                                  await ref.putFile(file).onComplete;
+                              await ref.putFile(file).onComplete;
                               String downloadURL = await ref.getDownloadURL();
 
                               await FirebaseFirestore.instance
@@ -407,9 +411,9 @@ class _MakerViewState extends State<MakerView> {
                               widget.onFeedUploaded();
                               analytics.logEvent(name: 'feed');
                               try {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: const Text(
-                                        'Save avatar successfully')));
+                                scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    content:
+                                        Text('Save avatar successfully...')));
                               } catch (e) {}
                               showInterstitialAd();
                             }),
