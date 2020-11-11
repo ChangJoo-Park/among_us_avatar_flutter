@@ -19,11 +19,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:http/http.dart' as http;
+import 'package:store_redirect/store_redirect.dart';
 
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
@@ -591,6 +593,9 @@ class FeedView extends StatefulWidget {
 }
 
 class _FeedViewState extends State<FeedView> {
+  PaginateRefreshedChangeListener refreshChangeListener =
+      PaginateRefreshedChangeListener();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -598,72 +603,94 @@ class _FeedViewState extends State<FeedView> {
       appBar: AppBar(
         title: Text('Feed'),
         backgroundColor: Colors.black87,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.star_rate),
+            onPressed: () {
+              StoreRedirect.redirect();
+            },
+          )
+        ],
       ),
-      body: PaginateFirestore(
-        itemBuilderType:
-            PaginateBuilderType.listView, //Change types accordingly
-        itemBuilder: (index, context, documentSnapshot) {
-          Map<String, dynamic> item = documentSnapshot.data();
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(8),
-                margin: const EdgeInsets.only(bottom: 16),
-                child: Column(
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: item['url'],
-                    ),
-                    if (item['body'] != null) SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        item['body'] ?? '',
-                        overflow: TextOverflow.visible,
-                      ),
-                    ),
-                    ButtonBar(
-                      children: [
-                        FlatButton.icon(
-                          icon: Icon(Icons.share),
-                          label: Text('Share'),
-                          onPressed: () async {
-                            try {
-                              File file = await urlToFile(item['url']);
-                              await Share.file(
-                                      'avatar',
-                                      '${DateTime.now()}.png',
-                                      file
-                                          .readAsBytesSync()
-                                          .buffer
-                                          .asUint8List(),
-                                      'image/png',
-                                      text: 'https://bit.ly/3omY7hn')
-                                  .then((value) {
-                                analytics.logEvent(name: 'share_from_feed');
-                                showInterstitialAd();
-                              });
-                            } catch (e) {
-                              print('error: $e');
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
-          );
+      body: RefreshIndicator(
+        onRefresh: () async {
+          refreshChangeListener.refreshed = true;
+          showInterstitialAd();
         },
-        query: FirebaseFirestore.instance.collection('feed').orderBy(
-              'timestamp',
-              descending: true,
-            ),
-        onLoaded: (value) {},
+        child: PaginateFirestore(
+          itemBuilderType:
+              PaginateBuilderType.listView, //Change types accordingly
+          itemBuilder: (index, context, documentSnapshot) {
+            Map<String, dynamic> item = documentSnapshot.data();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    children: [
+                      CachedNetworkImage(
+                        width: MediaQuery.of(context).size.height / 4,
+                        height: MediaQuery.of(context).size.height / 4,
+                        imageUrl: item['url'],
+                      ),
+                      if (item['body'] != null) SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          item['body'] ?? '',
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                      ButtonBar(
+                        children: [
+                          FlatButton.icon(
+                            icon: Icon(Icons.share),
+                            label: Text('Share'),
+                            onPressed: () async {
+                              try {
+                                File file = await urlToFile(item['url']);
+                                await Share.file(
+                                        'avatar',
+                                        '${DateTime.now()}.png',
+                                        file
+                                            .readAsBytesSync()
+                                            .buffer
+                                            .asUint8List(),
+                                        'image/png',
+                                        text: 'https://bit.ly/3omY7hn')
+                                    .then((value) {
+                                  analytics.logEvent(name: 'share_from_feed');
+                                  showInterstitialAd();
+                                });
+                              } catch (e) {
+                                print('error: $e');
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            );
+          },
+          query: FirebaseFirestore.instance.collection('feed').orderBy(
+                'timestamp',
+                descending: true,
+              ),
+          itemsPerPage: 15,
+          listeners: [
+            refreshChangeListener,
+          ],
+          onLoaded: (value) {
+            showInterstitialAd();
+          },
+        ),
       ),
     );
   }
