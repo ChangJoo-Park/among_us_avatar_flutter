@@ -657,6 +657,7 @@ class _FeedViewState extends State<FeedView> {
             icon: Icon(Icons.star_rate),
             onPressed: () {
               StoreRedirect.redirect();
+              analytics.logEvent(name: 'store_redirect');
             },
           )
         ],
