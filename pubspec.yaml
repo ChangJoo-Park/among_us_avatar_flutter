@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
   path_provider: ^1.6.22
   smooth_page_indicator: ^0.2.0
   image_gallery_saver: ^1.6.1
@@ -44,3 +47,8 @@ flutter:
     - images/PETS/
     - images/VOTE/
     - assets/effect/select.mp3
+    - assets/locale/en.json
+    - assets/locale/es.json
+    - assets/locale/pt.json
+    - assets/locale/de.json
+    - assets/locale/ru.json

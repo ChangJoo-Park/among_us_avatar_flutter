@@ -1,0 +1,11 @@
+{
+  "app_title": "Among Us Avatar",
+  "default_dialog_text": "Ceci est mon avatar!",
+  "save_success": "Enregistrer l'avatar avec succès",
+  "uploading": "Téléchargement...",
+  "upload_success": "Enregistrer l'avatar avec succès ...",
+  "share": "Partager",
+  "save": "sauvegarder",
+  "feed": "Utilisateurs",
+  "avatars_from_users": "Avatars des utilisateurs"
+}

@@ -4,6 +4,8 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:among_us_profile_maker/translations.dart';
+import 'package:among_us_profile_maker/translations_delegate.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
@@ -71,6 +74,40 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        const TranslationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale('de', ''),
+        const Locale('es', ''),
+        const Locale('fr', ''),
+        const Locale('id', ''),
+        const Locale('it', ''),
+        const Locale('pt', ''),
+        const Locale('ru', ''),
+        const Locale('vi', ''),
+      ],
+      localeResolutionCallback:
+          (Locale locale, Iterable<Locale> supportedLocales) {
+        if (locale == null) {
+          debugPrint("*language locale is null!!!");
+          return supportedLocales.first;
+        }
+
+        for (Locale supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale.languageCode ||
+              supportedLocale.countryCode == locale.countryCode) {
+            debugPrint("*language ok $supportedLocale");
+            return supportedLocale;
+          }
+        }
+
+        debugPrint("*language to fallback ${supportedLocales.first}");
+        return supportedLocales.first;
+      },
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
@@ -315,7 +352,8 @@ class _MakerViewState extends State<MakerView> {
                             Form(
                               key: _formKey,
                               child: TextFormField(
-                                initialValue: 'This is my avatar!',
+                                initialValue: Translations.of(scaffoldKey.currentContext)
+                                    .trans('default_dialog_text'),
                                 onSaved: (value) {
                                   setState(() {
                                     shareMessage = value;
@@ -329,7 +367,8 @@ class _MakerViewState extends State<MakerView> {
                       actions: [
                         FlatButton.icon(
                           icon: Icon(Icons.save),
-                          label: Text('Save'),
+                          label: Text(Translations.of(context)
+                                    .trans('save')),
                           onPressed: () async {
                             try {
                               if (await Permission.storage
@@ -342,8 +381,9 @@ class _MakerViewState extends State<MakerView> {
                                 Navigator.of(context).pop();
                                 try {
                                   Scaffold.of(context).showSnackBar(SnackBar(
-                                      content: const Text(
-                                          'Save avatar successfully')));
+                                      content: Text(
+                                          Translations.of(context)
+                                    .trans('save_success'))));
                                 } catch (e) {}
                                 if (kReleaseMode) {
                                   analytics.logEvent(name: 'save');
@@ -357,7 +397,8 @@ class _MakerViewState extends State<MakerView> {
                         ),
                         FlatButton.icon(
                           icon: Icon(Icons.share),
-                          label: Text('Share'),
+                          label: Text(Translations.of(context)
+                                    .trans('share')),
                           onPressed: () async {
                             try {
                               _formKey.currentState.save();
@@ -381,10 +422,12 @@ class _MakerViewState extends State<MakerView> {
                         ),
                         FlatButton.icon(
                             icon: Icon(Icons.cloud_circle),
-                            label: Text('Feed'),
+                            label: Text(Translations.of(context)
+                                    .trans('feed')),
                             onPressed: () async {
                               scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(content: Text('Uploading...')));
+                                  SnackBar(content: Text(Translations.of(context)
+                                    .trans('uploading'))));
                               _formKey.currentState.save();
                               Navigator.of(context).pop();
                               UserCredential userCredential = await signIn();
@@ -413,7 +456,8 @@ class _MakerViewState extends State<MakerView> {
                               try {
                                 scaffoldKey.currentState.showSnackBar(SnackBar(
                                     content:
-                                        Text('Save avatar successfully...')));
+                                        Text(Translations.of(context)
+                                    .trans('upload_success'))));
                               } catch (e) {}
                               showInterstitialAd();
                             }),
@@ -605,7 +649,8 @@ class _FeedViewState extends State<FeedView> {
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
-        title: Text('Feed'),
+        title: Text(Translations.of(context)
+                                    .trans('avatars_from_users')),
         backgroundColor: Colors.black87,
         actions: [
           IconButton(
@@ -653,7 +698,8 @@ class _FeedViewState extends State<FeedView> {
                         children: [
                           FlatButton.icon(
                             icon: Icon(Icons.share),
-                            label: Text('Share'),
+                            label: Text(Translations.of(context)
+                                    .trans('share')),
                             onPressed: () async {
                               try {
                                 File file = await urlToFile(item['url']);
