@@ -9,6 +9,7 @@ import 'package:among_us_profile_maker/translations_delegate.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -16,6 +17,7 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -122,7 +124,19 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: DoubleBack(
+        onFirstBackPress: (context) {
+          Flushbar(
+            flushbarPosition: FlushbarPosition.TOP,
+            title: Translations.of(context)
+                                        .trans('close_back_title'),
+            message: Translations.of(context)
+                                        .trans('close_back_message'),
+            duration: Duration(seconds: 15), // show 15 second flushbar
+          )..show(context);
+        },
+        child: MyHomePage(title: 'Flutter Demo Home Page'),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -155,17 +169,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
-      body: PageView.builder(
-        controller: pageController,
-        itemCount: 2,
-        itemBuilder: (BuildContext context, int index) {
-          return _page[index];
-        },
-      ),
-    );
+        backgroundColor: Colors.black87,
+        body: PageView.builder(
+          controller: pageController,
+          itemCount: 2,
+          itemBuilder: (BuildContext context, int index) {
+            return _page[index];
+          },
+        ));
   }
 }
+
+class DoubleBackToCloseApp {}
 
 class MakerView extends StatefulWidget {
   MakerView({key, this.onFeedUploaded}) : super(key: key);
@@ -352,8 +367,9 @@ class _MakerViewState extends State<MakerView> {
                             Form(
                               key: _formKey,
                               child: TextFormField(
-                                initialValue: Translations.of(scaffoldKey.currentContext)
-                                    .trans('default_dialog_text'),
+                                initialValue:
+                                    Translations.of(scaffoldKey.currentContext)
+                                        .trans('default_dialog_text'),
                                 onSaved: (value) {
                                   setState(() {
                                     shareMessage = value;
@@ -367,8 +383,7 @@ class _MakerViewState extends State<MakerView> {
                       actions: [
                         FlatButton.icon(
                           icon: Icon(Icons.save),
-                          label: Text(Translations.of(context)
-                                    .trans('save')),
+                          label: Text(Translations.of(context).trans('save')),
                           onPressed: () async {
                             try {
                               if (await Permission.storage
@@ -381,9 +396,8 @@ class _MakerViewState extends State<MakerView> {
                                 Navigator.of(context).pop();
                                 try {
                                   Scaffold.of(context).showSnackBar(SnackBar(
-                                      content: Text(
-                                          Translations.of(context)
-                                    .trans('save_success'))));
+                                      content: Text(Translations.of(context)
+                                          .trans('save_success'))));
                                 } catch (e) {}
                                 if (kReleaseMode) {
                                   analytics.logEvent(name: 'save');
@@ -397,8 +411,7 @@ class _MakerViewState extends State<MakerView> {
                         ),
                         FlatButton.icon(
                           icon: Icon(Icons.share),
-                          label: Text(Translations.of(context)
-                                    .trans('share')),
+                          label: Text(Translations.of(context).trans('share')),
                           onPressed: () async {
                             try {
                               _formKey.currentState.save();
@@ -422,12 +435,11 @@ class _MakerViewState extends State<MakerView> {
                         ),
                         FlatButton.icon(
                             icon: Icon(Icons.cloud_circle),
-                            label: Text(Translations.of(context)
-                                    .trans('feed')),
+                            label: Text(Translations.of(context).trans('feed')),
                             onPressed: () async {
-                              scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(content: Text(Translations.of(context)
-                                    .trans('uploading'))));
+                              scaffoldKey.currentState.showSnackBar(SnackBar(
+                                  content: Text(Translations.of(context)
+                                      .trans('uploading'))));
                               _formKey.currentState.save();
                               Navigator.of(context).pop();
                               UserCredential userCredential = await signIn();
@@ -455,9 +467,8 @@ class _MakerViewState extends State<MakerView> {
                               analytics.logEvent(name: 'feed');
                               try {
                                 scaffoldKey.currentState.showSnackBar(SnackBar(
-                                    content:
-                                        Text(Translations.of(context)
-                                    .trans('upload_success'))));
+                                    content: Text(Translations.of(context)
+                                        .trans('upload_success'))));
                               } catch (e) {}
                               showInterstitialAd();
                             }),
@@ -649,8 +660,7 @@ class _FeedViewState extends State<FeedView> {
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
-        title: Text(Translations.of(context)
-                                    .trans('avatars_from_users')),
+        title: Text(Translations.of(context).trans('avatars_from_users')),
         backgroundColor: Colors.black87,
         actions: [
           IconButton(
@@ -699,8 +709,8 @@ class _FeedViewState extends State<FeedView> {
                         children: [
                           FlatButton.icon(
                             icon: Icon(Icons.share),
-                            label: Text(Translations.of(context)
-                                    .trans('share')),
+                            label:
+                                Text(Translations.of(context).trans('share')),
                             onPressed: () async {
                               try {
                                 File file = await urlToFile(item['url']);

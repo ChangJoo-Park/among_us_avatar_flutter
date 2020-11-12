@@ -7,5 +7,7 @@
   "share": "Compartilhar",
   "save": "Salve",
   "feed": "Do utilizador",
-  "avatars_from_users": "Avatares de usuários"
+  "avatars_from_users": "Avatares de usuários",
+  "close_back_title": "Fechar?",
+  "close_back_message": "Pressione novamente para sair"
 }

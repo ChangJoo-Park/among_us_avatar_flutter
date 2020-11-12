@@ -7,5 +7,7 @@
   "share": "Share",
   "save": "Save",
   "feed": "Feed",
-  "avatars_from_users": "Avatars from users"
+  "avatars_from_users": "Avatars from users",
+  "close_back_title": "Close?",
+  "close_back_message": "Press back again to exit"
 }
