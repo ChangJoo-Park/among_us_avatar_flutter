@@ -30,6 +30,7 @@ dependencies:
   cached_network_image: ^2.3.3
   http: ^0.12.2
   store_redirect: ^1.0.2
+  double_back_to_close_app: ^1.2.0
 
 dev_dependencies:
   flutter_test:
