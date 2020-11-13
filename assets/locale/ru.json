@@ -14,5 +14,6 @@
   "custom_text_text": "Текст",
   "custom_text_size": "Размер",
   "custom_text_color": "цвет",
-  "custom_text_save": "Сохранить"
+  "custom_text_save": "Сохранить",
+  "custom_text_button_change_color": "Сменить цвет"
 }

@@ -14,5 +14,6 @@
   "custom_text_text": "Texte",
   "custom_text_size": "Taille",
   "custom_text_color": "Couleur",
-  "custom_text_save": "sauvegarder"
+  "custom_text_save": "sauvegarder",
+  "custom_text_button_change_color": "Changer de couleur"
 }
