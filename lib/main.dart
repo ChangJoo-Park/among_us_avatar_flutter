@@ -665,6 +665,7 @@ class _MakerViewState extends State<MakerView>
                                                 name: 'end_editor');
                                             setState(() {
                                               _votes.add(Image.memory(value));
+                                              _vote = Image.memory(value);
                                             });
                                           }
                                         });
