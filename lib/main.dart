@@ -128,10 +128,8 @@ class _MyAppState extends State<MyApp> {
         onFirstBackPress: (context) {
           Flushbar(
             flushbarPosition: FlushbarPosition.TOP,
-            title: Translations.of(context)
-                                        .trans('close_back_title'),
-            message: Translations.of(context)
-                                        .trans('close_back_message'),
+            title: Translations.of(context).trans('close_back_title'),
+            message: Translations.of(context).trans('close_back_message'),
             duration: Duration(seconds: 15), // show 15 second flushbar
           )..show(context);
         },
@@ -421,7 +419,7 @@ class _MakerViewState extends State<MakerView> {
                                       byteData.buffer.asUint8List(),
                                       'image/png',
                                       text:
-                                          '$shareMessage\nhttps://bit.ly/3omY7hn')
+                                          '$shareMessage\nhttps://auam.page.link/run')
                                   .then((value) {
                                 showInterstitialAd();
                               });
@@ -722,7 +720,7 @@ class _FeedViewState extends State<FeedView> {
                                             .buffer
                                             .asUint8List(),
                                         'image/png',
-                                        text: 'https://bit.ly/3omY7hn')
+                                        text: 'https://auam.page.link/run')
                                     .then((value) {
                                   analytics.logEvent(name: 'share_from_feed');
                                   showInterstitialAd();

@@ -49,8 +49,12 @@ flutter:
     - images/PETS/
     - images/VOTE/
     - assets/effect/select.mp3
+    - assets/locale/de.json
     - assets/locale/en.json
     - assets/locale/es.json
+    - assets/locale/fr.json
+    - assets/locale/id.json
+    - assets/locale/it.json
     - assets/locale/pt.json
-    - assets/locale/de.json
     - assets/locale/ru.json
+    - assets/locale/vi.json
