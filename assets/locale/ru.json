@@ -9,5 +9,10 @@
   "feed": "Корм",
   "avatars_from_users": "Аватарки от пользователей",
   "close_back_title": "Близко?",
-  "close_back_message": "Нажмите еще раз, чтобы выйти"
+  "close_back_message": "Нажмите еще раз, чтобы выйти",
+  "custom_text_title": "Настроить текст",
+  "custom_text_text": "Текст",
+  "custom_text_size": "Размер",
+  "custom_text_color": "цвет",
+  "custom_text_save": "Сохранить"
 }

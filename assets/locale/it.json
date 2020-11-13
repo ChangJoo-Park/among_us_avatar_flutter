@@ -9,5 +9,10 @@
   "feed": "Utenti",
   "avatars_from_users": "Avatar degli utenti",
   "close_back_title": "Vicino?",
-  "close_back_message": "Premi nuovamente indietro per uscire"
+  "close_back_message": "Premi nuovamente indietro per uscire",
+  "custom_text_title": "Personalizza il testo",
+  "custom_text_text": "Testo",
+  "custom_text_size": "Taglia",
+  "custom_text_color": "Colore",
+  "custom_text_save": "Salva"
 }

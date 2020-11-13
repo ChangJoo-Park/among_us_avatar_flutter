@@ -9,5 +9,10 @@
   "feed": "Benutzer",
   "avatars_from_users": "Avatare von Benutzern",
   "close_back_title": "Schließen?",
-  "close_back_message": "Zum Beenden erneut zurück drücken"
+  "close_back_message": "Zum Beenden erneut zurück drücken",
+  "custom_text_title": "Passen Sie Text an",
+  "custom_text_text": "Text",
+  "custom_text_size": "Größe",
+  "custom_text_color": "Farbe",
+  "custom_text_save": "Sparen"
 }

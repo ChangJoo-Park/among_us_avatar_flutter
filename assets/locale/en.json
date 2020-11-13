@@ -9,5 +9,10 @@
   "feed": "Feed",
   "avatars_from_users": "Avatars from users",
   "close_back_title": "Close?",
-  "close_back_message": "Press back again to exit"
+  "close_back_message": "Press back again to exit",
+  "custom_text_title": "Customize Text",
+  "custom_text_text": "Text",
+  "custom_text_size": "Size",
+  "custom_text_color": "Color",
+  "custom_text_save": "Save"
 }

@@ -9,5 +9,10 @@
   "feed": "Người dùng",
   "avatars_from_users": "Ảnh đại diện từ người dùng",
   "close_back_title": "Đóng?",
-  "close_back_message": "Nhấn lại lần nữa để thoát"
+  "close_back_message": "Nhấn lại lần nữa để thoát",
+  "custom_text_title": "Tùy chỉnh văn bản",
+  "custom_text_text": "Bản văn",
+  "custom_text_size": "Kích thước",
+  "custom_text_color": "Màu sắc",
+  "custom_text_save": "Tiết kiệm"
 }

@@ -9,5 +9,10 @@
   "feed": "Pengguna",
   "avatars_from_users": "Avatar dari pengguna",
   "close_back_title": "Menutup?",
-  "close_back_message": "Tekan kembali untuk keluar"
+  "close_back_message": "Tekan kembali untuk keluar",
+  "custom_text_title": "Sesuaikan Teks",
+  "custom_text_text": "Teks",
+  "custom_text_size": "Ukuran",
+  "custom_text_color": "Warna",
+  "custom_text_save": "Menyimpan"
 }
