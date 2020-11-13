@@ -536,11 +536,11 @@ class _MakerViewState extends State<MakerView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _backgrounds.length,
+                          itemCount: _players.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Widget image = _backgrounds[index];
+                            Image image = _players[index];
                             return GestureDetector(
-                              onTap: () => setState(() => _background = image),
+                              onTap: () => setState(() => _player = image),
                               child:
                                   Container(color: Colors.white, child: image),
                             );
@@ -551,11 +551,11 @@ class _MakerViewState extends State<MakerView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _players.length,
+                          itemCount: _backgrounds.length,
                           itemBuilder: (BuildContext context, int index) {
-                            Image image = _players[index];
+                            Widget image = _backgrounds[index];
                             return GestureDetector(
-                              onTap: () => setState(() => _player = image),
+                              onTap: () => setState(() => _background = image),
                               child:
                                   Container(color: Colors.white, child: image),
                             );
@@ -617,8 +617,27 @@ class _MakerViewState extends State<MakerView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _votes.length,
+                          itemCount: _votes.length, // 마지막은 커스텀
                           itemBuilder: (BuildContext context, int index) {
+                            // if (index == _votes.length) {
+                            //   return Stack(
+                            //     children: [
+                            //       Container(
+                            //         width: double.infinity,
+                            //         height: double.infinity,
+                            //         color: Colors.amber,
+                            //         child: Icon(Icons.add, color: Colors.white),
+                            //       ),
+                            //       Positioned.fill(
+                            //         child: InkWell(
+                            //           onTap: () {
+                            //             print('HELLO WORLD');
+                            //           },
+                            //         ),
+                            //       )
+                            //     ],
+                            //   );
+                            // }
                             Widget image = _votes[index];
                             return GestureDetector(
                               onTap: () => setState(() => _vote = image),
