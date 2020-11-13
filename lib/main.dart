@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:among_us_profile_maker/custom_text_editor.dart';
 import 'package:among_us_profile_maker/translations.dart';
 import 'package:among_us_profile_maker/translations_delegate.dart';
 import 'package:audioplayers/audio_cache.dart';
@@ -169,6 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         backgroundColor: Colors.black87,
         body: PageView.builder(
+          pageSnapping: true,
+          key: ValueKey('PAGEVIEW'),
           controller: pageController,
           itemCount: 2,
           itemBuilder: (BuildContext context, int index) {
@@ -178,8 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class DoubleBackToCloseApp {}
-
 class MakerView extends StatefulWidget {
   MakerView({key, this.onFeedUploaded}) : super(key: key);
   final VoidCallback onFeedUploaded;
@@ -187,7 +188,8 @@ class MakerView extends StatefulWidget {
   _MakerViewState createState() => _MakerViewState();
 }
 
-class _MakerViewState extends State<MakerView> {
+class _MakerViewState extends State<MakerView>
+    with AutomaticKeepAliveClientMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Player
@@ -332,6 +334,10 @@ class _MakerViewState extends State<MakerView> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
@@ -490,10 +496,12 @@ class _MakerViewState extends State<MakerView> {
           child: Column(
             children: [
               Expanded(
-                flex: 1,
+                flex: 0,
                 child: RepaintBoundary(
                   key: _globalKey,
                   child: Container(
+                    width: 250,
+                    height: 250,
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -520,6 +528,11 @@ class _MakerViewState extends State<MakerView> {
               Container(
                 padding: const EdgeInsets.only(top: 20),
                 child: SmoothPageIndicator(
+                  onDotClicked: (value) {
+                    controller.animateToPage(value,
+                        curve: Curves.easeIn,
+                        duration: Duration(milliseconds: 100));
+                  },
                   controller: controller,
                   count: 6,
                   effect: ExpandingDotsEffect(activeDotColor: Colors.white),
@@ -533,6 +546,7 @@ class _MakerViewState extends State<MakerView> {
                     controller: controller,
                     children: [
                       Container(
+                        key: ValueKey('player-page'),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
@@ -540,9 +554,13 @@ class _MakerViewState extends State<MakerView> {
                           itemBuilder: (BuildContext context, int index) {
                             Image image = _players[index];
                             return GestureDetector(
+                              key: ValueKey('player-$index'),
                               onTap: () => setState(() => _player = image),
-                              child:
-                                  Container(color: Colors.white, child: image),
+                              child: Container(
+                                key: ValueKey('player-$index-image'),
+                                color: Colors.white,
+                                child: image,
+                              ),
                             );
                           },
                         ),
@@ -617,27 +635,45 @@ class _MakerViewState extends State<MakerView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _votes.length, // 마지막은 커스텀
+                          itemCount: _votes.length + 1, // 마지막은 커스텀
                           itemBuilder: (BuildContext context, int index) {
-                            // if (index == _votes.length) {
-                            //   return Stack(
-                            //     children: [
-                            //       Container(
-                            //         width: double.infinity,
-                            //         height: double.infinity,
-                            //         color: Colors.amber,
-                            //         child: Icon(Icons.add, color: Colors.white),
-                            //       ),
-                            //       Positioned.fill(
-                            //         child: InkWell(
-                            //           onTap: () {
-                            //             print('HELLO WORLD');
-                            //           },
-                            //         ),
-                            //       )
-                            //     ],
-                            //   );
-                            // }
+                            if (index == _votes.length) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.amber,
+                                    child: Icon(Icons.add, color: Colors.black),
+                                  ),
+                                  Positioned.fill(
+                                    child: InkWell(
+                                      onTap: () {
+                                        analytics.logEvent(
+                                            name: 'start_editor');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            maintainState: true,
+                                            builder: (context) =>
+                                                CustomTextEditor(),
+                                          ),
+                                        ).then((value) {
+                                          if (value != null) {
+                                            analytics.logEvent(
+                                                name: 'end_editor');
+                                            setState(() {
+                                              _votes.add(Image.memory(value));
+                                            });
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
                             Widget image = _votes[index];
                             return GestureDetector(
                               onTap: () => setState(() => _vote = image),

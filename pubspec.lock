@@ -113,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2+mit"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.5"
   esys_flutter_share:
     dependency: "direct main"
     description:
@@ -329,6 +336,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.4"
+  o_color_picker:
+    dependency: "direct main"
+    description:
+      name: o_color_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   octo_image:
     dependency: transitive
     description:

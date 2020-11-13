@@ -32,11 +32,16 @@ dependencies:
   store_redirect: ^1.0.2
   double_back_to_close: ^1.0.2+mit
   flushbar: ^1.10.4
+  o_color_picker: ^0.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 flutter:
+  fonts:
+    - family: AmongUs
+      fonts:
+        - asset: assets/fonts/VCR_OSD_MONO_1.001.ttf
 
   uses-material-design: true
   assets:
