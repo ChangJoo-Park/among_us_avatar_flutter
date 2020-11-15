@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:among_us_profile_maker/view/custom_camera_background.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:among_us_profile_maker/analytics.dart';
@@ -206,8 +207,9 @@ class _MakerViewState extends State<MakerView>
   bool get wantKeepAlive => true;
 
   @override
-  // ignore: must_call_super
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -221,7 +223,7 @@ class _MakerViewState extends State<MakerView>
             },
           ),
           IconButton(
-              icon: Icon(Icons.camera_alt_outlined),
+              icon: Icon(Icons.share),
               onPressed: () async {
                 try {
                   RenderRepaintBoundary boundary =
@@ -258,93 +260,23 @@ class _MakerViewState extends State<MakerView>
                           icon: Icon(Icons.save),
                           label: Text(Translations.of(context).trans('save')),
                           onPressed: () async {
-                            try {
-                              if (await Permission.storage
-                                  .request()
-                                  .isGranted) {
-                                await ImageGallerySaver.saveImage(
-                                  byteData.buffer.asUint8List(),
-                                  quality: 100,
-                                );
-                                Navigator.of(context).pop();
-                                try {
-                                  Scaffold.of(context).showSnackBar(SnackBar(
-                                      content: Text(Translations.of(context)
-                                          .trans('save_success'))));
-                                } catch (e) {}
-                                if (kReleaseMode) {
-                                  analytics.logEvent(name: 'save');
-                                }
-                              }
-                              showInterstitialAd();
-                            } catch (e) {
-                              print('error: $e');
-                            }
+                            await save(byteData, context);
                           },
                         ),
                         FlatButton.icon(
                           icon: Icon(Icons.share),
                           label: Text(Translations.of(context).trans('share')),
                           onPressed: () async {
-                            try {
-                              _formKey.currentState.save();
-                              await Share.file(
-                                      'avatar',
-                                      '${DateTime.now()}.png',
-                                      byteData.buffer.asUint8List(),
-                                      'image/png',
-                                      text:
-                                          '$shareMessage\nhttps://auam.page.link/run')
-                                  .then((value) {
-                                showInterstitialAd();
-                              });
-                              analytics.logEvent(name: 'share');
-
-                              Navigator.of(context).pop();
-                            } catch (e) {
-                              print('error: $e');
-                            }
+                            await _share(byteData, context);
                           },
                         ),
                         FlatButton.icon(
-                            icon: Icon(Icons.cloud_circle),
-                            label: Text(Translations.of(context).trans('feed')),
-                            onPressed: () async {
-                              scaffoldKey.currentState.showSnackBar(SnackBar(
-                                  content: Text(Translations.of(context)
-                                      .trans('uploading'))));
-                              _formKey.currentState.save();
-                              Navigator.of(context).pop();
-                              UserCredential userCredential = await signIn();
-                              final fireStorage = FirebaseStorage.instance;
-                              String url =
-                                  '${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
-                              StorageReference ref = fireStorage
-                                  .ref()
-                                  .child('feed')
-                                  .child(userCredential.user.uid)
-                                  .child(url);
-                              File file = await writeToFile(byteData);
-                              await ref.putFile(file).onComplete;
-                              String downloadURL = await ref.getDownloadURL();
-
-                              await FirebaseFirestore.instance
-                                  .collection('feed')
-                                  .add({
-                                'url': downloadURL,
-                                'body': shareMessage,
-                                'uid': userCredential.user.uid,
-                                'timestamp': DateTime.now(),
-                              });
-                              widget.onFeedUploaded();
-                              analytics.logEvent(name: 'feed');
-                              try {
-                                scaffoldKey.currentState.showSnackBar(SnackBar(
-                                    content: Text(Translations.of(context)
-                                        .trans('upload_success'))));
-                              } catch (e) {}
-                              showInterstitialAd();
-                            }),
+                          icon: Icon(Icons.cloud_circle),
+                          label: Text(Translations.of(context).trans('feed')),
+                          onPressed: () async {
+                            await _feed(context, byteData);
+                          },
+                        ),
                       ],
                     ),
                   );
@@ -438,8 +370,46 @@ class _MakerViewState extends State<MakerView>
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _backgrounds.length,
+                          itemCount: _backgrounds.length + 1,
                           itemBuilder: (BuildContext context, int index) {
+                            if (index == _backgrounds.length) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.amber,
+                                    child: Icon(Icons.add, color: Colors.black),
+                                  ),
+                                  Positioned.fill(
+                                    child: InkWell(
+                                      onTap: () {
+                                        analytics.logEvent(
+                                            name: 'start_editor');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            maintainState: true,
+                                            builder: (context) =>
+                                                CustomCameraBackground(),
+                                          ),
+                                        ).then((value) {
+                                          if (value != null) {
+                                            analytics.logEvent(
+                                                name: 'end_editor');
+                                            setState(() {
+                                              _votes.add(Image.memory(value));
+                                              _vote = Image.memory(value);
+                                            });
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
                             Widget image = _backgrounds[index];
                             return GestureDetector(
                               onTap: () => setState(() => _background = image),
@@ -565,6 +535,77 @@ class _MakerViewState extends State<MakerView>
         ),
       ),
     );
+  }
+
+  Future _feed(BuildContext context, ByteData byteData) async {
+    scaffoldKey.currentState.showSnackBar(
+        SnackBar(content: Text(Translations.of(context).trans('uploading'))));
+    _formKey.currentState.save();
+    Navigator.of(context).pop();
+    UserCredential userCredential = await signIn();
+    final fireStorage = FirebaseStorage.instance;
+    String url = '${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
+    StorageReference ref = fireStorage
+        .ref()
+        .child('feed')
+        .child(userCredential.user.uid)
+        .child(url);
+    File file = await writeToFile(byteData);
+    await ref.putFile(file).onComplete;
+    String downloadURL = await ref.getDownloadURL();
+
+    await FirebaseFirestore.instance.collection('feed').add({
+      'url': downloadURL,
+      'body': shareMessage,
+      'uid': userCredential.user.uid,
+      'timestamp': DateTime.now(),
+    });
+    widget.onFeedUploaded();
+    analytics.logEvent(name: 'feed');
+    try {
+      scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(Translations.of(context).trans('upload_success'))));
+    } catch (e) {}
+    showInterstitialAd();
+  }
+
+  Future save(ByteData byteData, BuildContext context) async {
+    try {
+      if (await Permission.storage.request().isGranted) {
+        await ImageGallerySaver.saveImage(
+          byteData.buffer.asUint8List(),
+          quality: 100,
+        );
+        Navigator.of(context).pop();
+        try {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(Translations.of(context).trans('save_success'))));
+        } catch (e) {}
+        if (kReleaseMode) {
+          analytics.logEvent(name: 'save');
+        }
+      }
+      showInterstitialAd();
+    } catch (e) {
+      print('error: $e');
+    }
+  }
+
+  Future _share(ByteData byteData, BuildContext context) async {
+    try {
+      _formKey.currentState.save();
+      await Share.file('avatar', '${DateTime.now()}.png',
+              byteData.buffer.asUint8List(), 'image/png',
+              text: '$shareMessage\nhttps://auam.page.link/run')
+          .then((value) {
+        showInterstitialAd();
+      });
+      analytics.logEvent(name: 'share');
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      print('error: $e');
+    }
   }
 }
 
