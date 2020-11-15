@@ -794,7 +794,10 @@ class _FeedViewState extends State<FeedView> {
               ],
             );
           },
-          query: FirebaseFirestore.instance.collection('feed').orderBy(
+          query: FirebaseFirestore.instance
+              .collection('feed')
+              .where('timestamp', isLessThan: DateTime.now())
+              .orderBy(
                 'timestamp',
                 descending: true,
               ),
