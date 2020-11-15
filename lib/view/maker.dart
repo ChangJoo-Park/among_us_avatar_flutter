@@ -558,7 +558,7 @@ class _MakerViewState extends State<MakerView>
       'url': downloadURL,
       'body': shareMessage,
       'uid': userCredential.user.uid,
-      'timestamp': DateTime.now(),
+      'timestamp': FieldValue.serverTimestamp(),
     });
     widget.onFeedUploaded();
     analytics.logEvent(name: 'feed');
