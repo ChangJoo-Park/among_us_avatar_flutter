@@ -22,6 +22,7 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
   int _stroke = 0;
   List<double> _items = <double>[3, 5, 7, 9, 11, 13, 15];
   List<DrawingPoints> points = <DrawingPoints>[];
+  bool _showAvatar = true;
   @override
   void initState() {
     if (widget.type != 'BACKGROUND') {
@@ -37,6 +38,12 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
         backgroundColor: Colors.black87,
         title: Text(widget.title ?? 'Custom Layer Editor'),
         actions: [
+          IconButton(
+            icon: Icon(_showAvatar ? Icons.toggle_on : Icons.toggle_off),
+            onPressed: () {
+              setState(() => _showAvatar = !_showAvatar);
+            },
+          ),
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () async {
@@ -58,6 +65,16 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
             Center(
               child: Stack(
                 children: [
+                  if (_showAvatar)
+                    Container(
+                      width: 250,
+                      height: 250,
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                            Colors.white.withOpacity(0.1), BlendMode.dstATop),
+                        child: Image.asset('images/PLAYER/BASE.png'),
+                      ),
+                    ),
                   GestureDetector(
                     onPanUpdate: (details) {
                       setState(() {
