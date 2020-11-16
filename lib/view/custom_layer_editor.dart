@@ -65,7 +65,7 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
             Center(
               child: Stack(
                 children: [
-                  if (_showAvatar)
+                  if (widget.type != 'BACKGROUND' && _showAvatar)
                     Container(
                       width: 250,
                       height: 250,
