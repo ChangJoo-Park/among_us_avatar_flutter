@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'package:among_us_profile_maker/translations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:o_color_picker/o_color_picker.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
 class CustomTextEditor extends StatefulWidget {
@@ -33,7 +33,8 @@ class _CustomTextEditorState extends State<CustomTextEditor> {
         backgroundColor: Colors.black,
         actions: [
           FlatButton(
-            child: Text(Translations.of(context).trans('custom_text_save'), style: TextStyle(color: Colors.white)),
+            child: Text(Translations.of(context).trans('custom_text_save'),
+                style: TextStyle(color: Colors.white)),
             onPressed: () async {
               RenderRepaintBoundary boundary =
                   _globalKey.currentContext.findRenderObject();
@@ -99,7 +100,8 @@ class _CustomTextEditorState extends State<CustomTextEditor> {
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: Translations.of(context).trans('custom_text_text'),
+                        labelText:
+                            Translations.of(context).trans('custom_text_text'),
                       ),
                       initialValue: _customText,
                       onChanged: (String value) {

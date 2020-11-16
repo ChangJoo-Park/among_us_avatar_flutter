@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:among_us_profile_maker/view/custom_camera_background.dart';
+import 'package:among_us_profile_maker/view/custom_layer_editor.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:among_us_profile_maker/analytics.dart';
@@ -392,7 +392,10 @@ class _MakerViewState extends State<MakerView>
                                             fullscreenDialog: true,
                                             maintainState: true,
                                             builder: (context) =>
-                                                CustomCameraBackground(),
+                                                CustomLayerEditor(
+                                              title: 'Background Editor',
+                                              type: 'BACKGROUND',
+                                            ),
                                           ),
                                         ).then((value) {
                                           if (value != null) {
