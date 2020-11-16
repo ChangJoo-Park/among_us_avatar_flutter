@@ -22,6 +22,13 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
   int _stroke = 0;
   List<double> _items = <double>[3, 5, 7, 9, 11, 13, 15];
   List<DrawingPoints> points = <DrawingPoints>[];
+  @override
+  void initState() {
+    if (widget.type != 'BACKGROUND') {
+      _backgroundColor = Colors.transparent;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,42 +151,43 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         ],
                       ),
                     ),
-                    Text('배경색'),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                              foregroundDecoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(),
-                              ),
-                              width: 40,
-                              height: 40,
-                              color: _backgroundColor),
-                          SizedBox(width: 16),
-                          RaisedButton.icon(
-                            icon: Icon(Icons.palette),
-                            textColor: Colors.black,
-                            label: Text('Change Background Color'),
-                            onPressed: () => showDialog<void>(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                content: OColorPicker(
-                                  selectedColor: _backgroundColor,
-                                  colors: primaryColorsPalette,
-                                  onColorChange: (color) {
-                                    setState(() => _backgroundColor = color);
-                                    Navigator.of(context).pop();
-                                  },
+                    if (widget.type == 'BACKGROUND') Text('배경색'),
+                    if (widget.type == 'BACKGROUND')
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                                foregroundDecoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(),
+                                ),
+                                width: 40,
+                                height: 40,
+                                color: _backgroundColor),
+                            SizedBox(width: 16),
+                            RaisedButton.icon(
+                              icon: Icon(Icons.palette),
+                              textColor: Colors.black,
+                              label: Text('Change Background Color'),
+                              onPressed: () => showDialog<void>(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  content: OColorPicker(
+                                    selectedColor: _backgroundColor,
+                                    colors: primaryColorsPalette,
+                                    onColorChange: (color) {
+                                      setState(() => _backgroundColor = color);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
                     Text('두께'),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),

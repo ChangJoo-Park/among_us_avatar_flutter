@@ -427,8 +427,49 @@ class _MakerViewState extends State<MakerView>
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _outfits.length,
+                          itemCount: _outfits.length + 1,
                           itemBuilder: (BuildContext context, int index) {
+                            if (index == _outfits.length) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.amber,
+                                    child: Icon(Icons.add, color: Colors.black),
+                                  ),
+                                  Positioned.fill(
+                                    child: InkWell(
+                                      onTap: () {
+                                        analytics.logEvent(
+                                            name: 'start_editor');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            maintainState: true,
+                                            builder: (context) =>
+                                                CustomLayerEditor(
+                                              title: 'Outfit Editor',
+                                              type: 'OUTFIT',
+                                            ),
+                                          ),
+                                        ).then((value) {
+                                          if (value != null) {
+                                            analytics.logEvent(
+                                                name: 'end_editor');
+                                            setState(() {
+                                              _outfits.add(Image.memory(value));
+                                              _outfit = Image.memory(value);
+                                            });
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
                             Widget image = _outfits[index];
                             return GestureDetector(
                               onTap: () => setState(() => _outfit = image),
@@ -444,8 +485,50 @@ class _MakerViewState extends State<MakerView>
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _hats.length,
+                          itemCount: _hats.length + 1,
                           itemBuilder: (BuildContext context, int index) {
+                            if (index == _hats.length) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.amber,
+                                    child: Icon(Icons.add, color: Colors.black),
+                                  ),
+                                  Positioned.fill(
+                                    child: InkWell(
+                                      onTap: () {
+                                        analytics.logEvent(
+                                            name: 'start_editor');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            maintainState: true,
+                                            builder: (context) =>
+                                                CustomLayerEditor(
+                                              title: 'Hat Editor',
+                                              type: 'HAT',
+                                            ),
+                                          ),
+                                        ).then((value) {
+                                          if (value != null) {
+                                            analytics.logEvent(
+                                                name: 'end_editor');
+                                            setState(() {
+                                              _hats.add(Image.memory(value));
+                                              _hat = Image.memory(value);
+                                            });
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
+
                             Widget image = _hats[index];
                             return GestureDetector(
                               onTap: () => setState(() => _hat = image),
@@ -461,8 +544,50 @@ class _MakerViewState extends State<MakerView>
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GridView.builder(
                           gridDelegate: gridDelegate,
-                          itemCount: _pets.length,
+                          itemCount: _pets.length + 1,
                           itemBuilder: (BuildContext context, int index) {
+                            if (index == _pets.length) {
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.amber,
+                                    child: Icon(Icons.add, color: Colors.black),
+                                  ),
+                                  Positioned.fill(
+                                    child: InkWell(
+                                      onTap: () {
+                                        analytics.logEvent(
+                                            name: 'start_editor');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            fullscreenDialog: true,
+                                            maintainState: true,
+                                            builder: (context) =>
+                                                CustomLayerEditor(
+                                              title: 'Hat Editor',
+                                              type: 'HAT',
+                                            ),
+                                          ),
+                                        ).then((value) {
+                                          if (value != null) {
+                                            analytics.logEvent(
+                                                name: 'end_editor');
+                                            setState(() {
+                                              _pets.add(Image.memory(value));
+                                              _pet = Image.memory(value);
+                                            });
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
+
                             Widget image = _pets[index];
                             return GestureDetector(
                               onTap: () => setState(() => _pet = image),
