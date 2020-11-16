@@ -223,6 +223,40 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         }).toList(),
                       ),
                     ),
+                    Text('지우개'),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 4.0),
+                      child: RaisedButton.icon(
+                        icon: Icon(Icons.remove_circle_outline),
+                        textColor: Colors.black,
+                        label: Text('Clear'),
+                        onPressed: () => showDialog<void>(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text('Clear'),
+                            content: Container(
+                              child: Text('Clear all your draw?'),
+                            ),
+                            actions: [
+                              FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('No'),
+                              ),
+                              FlatButton(
+                                onPressed: () {
+                                  points.clear();
+                                  setState(() {});
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Yes'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               )),
