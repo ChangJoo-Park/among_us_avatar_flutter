@@ -15,5 +15,17 @@
   "custom_text_size": "Size",
   "custom_text_color": "Color",
   "custom_text_save": "Save",
-  "custom_text_button_change_color": "Change Color"
+  "custom_text_button_change_color": "Change Color",
+  "custom_editor_draw": "Draw",
+  "custom_editor_stroke": "Stroke",
+  "custom_editor_background": "Background",
+  "custom_editor_outfit": "Outfit",
+  "custom_editor_hat": "Hat",
+  "custom_editor_pet": "Pet",
+  "custom_editor_color": "Color",
+  "custom_editor_clear": "Clear",
+  "custom_editor_clear_modal_title": "Clear",
+  "custom_editor_clear_modal_description": "Clear your draw?",
+  "custom_editor_clear_modal_no": "No",
+  "custom_editor_clear_modal_yes": "Yes"
 }

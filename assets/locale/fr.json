@@ -15,5 +15,17 @@
   "custom_text_size": "Taille",
   "custom_text_color": "Couleur",
   "custom_text_save": "sauvegarder",
-  "custom_text_button_change_color": "Changer de couleur"
+  "custom_text_button_change_color": "Changer de couleur",
+  "custom_editor_draw": "Dessiner",
+  "custom_editor_stroke": "Toucher",
+  "custom_editor_background": "Fond",
+  "custom_editor_outfit": "Tissu",
+  "custom_editor_hat": "Chapeau",
+  "custom_editor_pet": "Animal",
+  "custom_editor_color": "Couleur",
+  "custom_editor_clear": "Clair",
+  "custom_editor_clear_modal_title": "Clair",
+  "custom_editor_clear_modal_description": "Effacez votre tirage au sort?",
+  "custom_editor_clear_modal_no": "No",
+  "custom_editor_clear_modal_yes": "Oui"
 }

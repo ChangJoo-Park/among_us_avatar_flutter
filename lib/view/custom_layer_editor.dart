@@ -36,16 +36,18 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87,
-        title: Text(widget.title ?? 'Custom Layer Editor'),
+        title: Text(title ?? 'Custom Layer Editor'),
         actions: [
-          IconButton(
-            icon: Icon(_showAvatar ? Icons.toggle_on : Icons.toggle_off),
-            onPressed: () {
-              setState(() => _showAvatar = !_showAvatar);
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.save),
+          if (widget.type == 'BACKGROUND')
+            IconButton(
+              icon: Icon(_showAvatar ? Icons.toggle_on : Icons.toggle_off),
+              onPressed: () {
+                setState(() => _showAvatar = !_showAvatar);
+              },
+            ),
+          FlatButton(
+            child: Text(Translations.of(context).trans('custom_text_save'),
+                style: TextStyle(color: Colors.white)),
             onPressed: () async {
               RenderRepaintBoundary boundary =
                   _globalKey.currentContext.findRenderObject();
@@ -146,11 +148,12 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(width: 40, height: 40, color: _customColor),
-                          SizedBox(width: 16),
+                          SizedBox(height: 16),
                           RaisedButton.icon(
                             icon: Icon(Icons.palette),
                             textColor: Colors.black,
-                            label: Text('Change Color'),
+                            label: Text(Translations.of(context)
+                                .trans('custom_editor_color')),
                             onPressed: () => showDialog<void>(
                               context: context,
                               builder: (_) => AlertDialog(
@@ -168,7 +171,9 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         ],
                       ),
                     ),
-                    if (widget.type == 'BACKGROUND') Text('배경색'),
+                    if (widget.type == 'BACKGROUND')
+                      Text(Translations.of(context)
+                          .trans('custom_editor_background')),
                     if (widget.type == 'BACKGROUND')
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -183,11 +188,12 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                                 width: 40,
                                 height: 40,
                                 color: _backgroundColor),
-                            SizedBox(width: 16),
+                            SizedBox(height: 16),
                             RaisedButton.icon(
                               icon: Icon(Icons.palette),
                               textColor: Colors.black,
-                              label: Text('Change Background Color'),
+                              label: Text(Translations.of(context)
+                                  .trans('custom_editor_background')),
                               onPressed: () => showDialog<void>(
                                 context: context,
                                 builder: (_) => AlertDialog(
@@ -205,7 +211,8 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                           ],
                         ),
                       ),
-                    Text('두께'),
+                    Text(
+                        Translations.of(context).trans('custom_editor_stroke')),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Row(
@@ -223,7 +230,7 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         }).toList(),
                       ),
                     ),
-                    Text('지우개'),
+                    Text(Translations.of(context).trans('custom_editor_clear')),
                     Padding(
                       padding: const EdgeInsets.only(top: 16, bottom: 4.0),
                       child: RaisedButton.icon(
@@ -233,16 +240,19 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         onPressed: () => showDialog<void>(
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: Text('Clear'),
+                            title: Text(Translations.of(context)
+                                .trans('custom_editor_clear_modal_title')),
                             content: Container(
-                              child: Text('Clear all your draw?'),
+                              child: Text(Translations.of(context).trans(
+                                  'custom_editor_clear_modal_description')),
                             ),
                             actions: [
                               FlatButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('No'),
+                                child: Text(Translations.of(context)
+                                    .trans('custom_editor_clear_modal_no')),
                               ),
                               FlatButton(
                                 onPressed: () {
@@ -250,7 +260,8 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                                   setState(() {});
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Yes'),
+                                child: Text(Translations.of(context)
+                                    .trans('custom_editor_clear_modal_yes')),
                               ),
                             ],
                           ),
@@ -265,6 +276,28 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
         ),
       ]),
     );
+  }
+
+  String get title {
+    final prefix = Translations.of(context).trans('custom_editor_draw');
+    String postfix = '';
+    switch (widget.type) {
+      case 'BACKGROUND':
+        postfix = Translations.of(context).trans('custom_editor_background');
+        break;
+      case 'OUTFIT':
+        postfix = Translations.of(context).trans('custom_editor_outfit');
+        break;
+      case 'HAT':
+        postfix = Translations.of(context).trans('custom_editor_hat');
+        break;
+      case 'PET':
+        postfix = Translations.of(context).trans('custom_editor_pet');
+        break;
+      default:
+    }
+
+    return '$prefix $postfix';
   }
 }
 

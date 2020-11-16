@@ -15,5 +15,17 @@
   "custom_text_size": "Ukuran",
   "custom_text_color": "Warna",
   "custom_text_save": "Menyimpan",
-  "custom_text_button_change_color": "Ganti warna"
+  "custom_text_button_change_color": "Ganti warna",
+  "custom_editor_draw": "Seri",
+  "custom_editor_stroke": "Stroke",
+  "custom_editor_background": "Latar Belakang",
+  "custom_editor_outfit": "Kain",
+  "custom_editor_hat": "Topi",
+  "custom_editor_pet": "Membelai",
+  "custom_editor_color": "Warna",
+  "custom_editor_clear": "Bersih",
+  "custom_editor_clear_modal_title": "Bersih",
+  "custom_editor_clear_modal_description": "Hapus undian Anda?",
+  "custom_editor_clear_modal_no": "Tidak",
+  "custom_editor_clear_modal_yes": "Iya"
 }

@@ -15,5 +15,17 @@
   "custom_text_size": "Talla",
   "custom_text_color": "Color",
   "custom_text_save": "Salvar",
-  "custom_text_button_change_color": "Cambiar el color"
+  "custom_text_button_change_color": "Cambiar el color",
+  "custom_editor_draw": "Dibujar",
+  "custom_editor_stroke": "Toque",
+  "custom_editor_background": "Antecedentes",
+  "custom_editor_outfit": "Paño",
+  "custom_editor_hat": "Sombrero",
+  "custom_editor_pet": "Mascota",
+  "custom_editor_color": "Color",
+  "custom_editor_clear": "Clear",
+  "custom_editor_clear_modal_title": "Claro",
+  "custom_editor_clear_modal_description": "Limpia tu empate?",
+  "custom_editor_clear_modal_no": "No",
+  "custom_editor_clear_modal_yes": "Si"
 }

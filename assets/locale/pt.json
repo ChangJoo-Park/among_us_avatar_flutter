@@ -15,5 +15,17 @@
   "custom_text_size": "Tamanho",
   "custom_text_color": "Cor",
   "custom_text_save": "Salve",
-  "custom_text_button_change_color": "Mudar cor"
+  "custom_text_button_change_color": "Mudar cor",
+  "custom_editor_draw": "Desenhar",
+  "custom_editor_stroke": "Derrame",
+  "custom_editor_background": "Fundo",
+  "custom_editor_outfit": "Pano",
+  "custom_editor_hat": "Chapéu",
+  "custom_editor_pet": "Animal",
+  "custom_editor_color": "Cor",
+  "custom_editor_clear": "Claro",
+  "custom_editor_clear_modal_title": "Claro",
+  "custom_editor_clear_modal_description": "Limpe o seu sorteio?",
+  "custom_editor_clear_modal_no": "Não",
+  "custom_editor_clear_modal_yes": "Sim"
 }

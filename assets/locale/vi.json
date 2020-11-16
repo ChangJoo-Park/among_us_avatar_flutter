@@ -15,5 +15,17 @@
   "custom_text_size": "Kích thước",
   "custom_text_color": "Màu sắc",
   "custom_text_save": "Tiết kiệm",
-  "custom_text_button_change_color": "Thay đổi màu sắc"
+  "custom_text_button_change_color": "Thay đổi màu sắc",
+  "custom_editor_draw": "Vẽ tranh",
+  "custom_editor_stroke": "Đột quỵ",
+  "custom_editor_background": "Lý lịch",
+  "custom_editor_outfit": "Trang phục",
+  "custom_editor_hat": "Mũ",
+  "custom_editor_pet": "Vật nuôi",
+  "custom_editor_color": "Màu sắc",
+  "custom_editor_clear": "Thông thoáng",
+  "custom_editor_clear_modal_title": "Thông thoáng",
+  "custom_editor_clear_modal_description": "Xóa bài vẽ của bạn?",
+  "custom_editor_clear_modal_no": "Không",
+  "custom_editor_clear_modal_yes": "Đúng"
 }

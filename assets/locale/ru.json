@@ -15,5 +15,17 @@
   "custom_text_size": "Размер",
   "custom_text_color": "цвет",
   "custom_text_save": "Сохранить",
-  "custom_text_button_change_color": "Сменить цвет"
+  "custom_text_button_change_color": "Сменить цвет",
+  "custom_editor_draw": "Привлечь",
+  "custom_editor_stroke": "Инсульт",
+  "custom_editor_background": "Задний план",
+  "custom_editor_outfit": "Снаряжение",
+  "custom_editor_hat": "Шапка",
+  "custom_editor_pet": "Домашнее животное",
+  "custom_editor_color": "цвет",
+  "custom_editor_clear": "Очистить",
+  "custom_editor_clear_modal_title": "Очистить",
+  "custom_editor_clear_modal_description": "Очистить свою ничью?",
+  "custom_editor_clear_modal_no": "Нет",
+  "custom_editor_clear_modal_yes": "да"
 }

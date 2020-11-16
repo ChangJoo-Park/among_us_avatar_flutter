@@ -15,5 +15,17 @@
   "custom_text_size": "Taglia",
   "custom_text_color": "Colore",
   "custom_text_save": "Salva",
-  "custom_text_button_change_color": "Cambia colore"
+  "custom_text_button_change_color": "Cambia colore",
+  "custom_editor_draw": "Disegnare",
+  "custom_editor_stroke": "Tratto",
+  "custom_editor_background": "Background",
+  "custom_editor_outfit": "Attrezzatura",
+  "custom_editor_hat": "Stoffa",
+  "custom_editor_pet": "Animale",
+  "custom_editor_color": "Colore",
+  "custom_editor_clear": "Chiaro",
+  "custom_editor_clear_modal_title": "Chiaro",
+  "custom_editor_clear_modal_description": "Cancella il tuo pareggio?",
+  "custom_editor_clear_modal_no": "No",
+  "custom_editor_clear_modal_yes": "Sì"
 }

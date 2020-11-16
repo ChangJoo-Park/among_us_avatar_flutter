@@ -15,5 +15,17 @@
   "custom_text_size": "Größe",
   "custom_text_color": "Farbe",
   "custom_text_save": "Sparen",
-  "custom_text_button_change_color": "Farbe ändern"
+  "custom_text_button_change_color": "Farbe ändern",
+  "custom_editor_draw": "Ziehen",
+  "custom_editor_stroke": "Schlaganfall",
+  "custom_editor_background": "Hintergrund",
+  "custom_editor_outfit": "Kleidung",
+  "custom_editor_hat": "Kappe",
+  "custom_editor_pet": "Haustier",
+  "custom_editor_color": "Farbe",
+  "custom_editor_clear": "Klar",
+  "custom_editor_clear_modal_title": "Klar",
+  "custom_editor_clear_modal_description": "Ziehe deine Auslosung?",
+  "custom_editor_clear_modal_no": "Nein",
+  "custom_editor_clear_modal_yes": "Ja"
 }
