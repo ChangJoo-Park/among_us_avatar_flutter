@@ -38,7 +38,7 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
         backgroundColor: Colors.black87,
         title: Text(title ?? 'Custom Layer Editor'),
         actions: [
-          if (widget.type == 'BACKGROUND')
+          if (widget.type != 'BACKGROUND')
             IconButton(
               icon: Icon(_showAvatar ? Icons.toggle_on : Icons.toggle_off),
               onPressed: () {
