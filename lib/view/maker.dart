@@ -567,8 +567,8 @@ class _MakerViewState extends State<MakerView>
                                             maintainState: true,
                                             builder: (context) =>
                                                 CustomLayerEditor(
-                                              title: 'Hat Editor',
-                                              type: 'HAT',
+                                              title: 'Pet Editor',
+                                              type: 'PET',
                                             ),
                                           ),
                                         ).then((value) {
