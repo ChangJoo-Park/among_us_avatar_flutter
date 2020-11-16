@@ -402,8 +402,9 @@ class _MakerViewState extends State<MakerView>
                                             analytics.logEvent(
                                                 name: 'end_editor');
                                             setState(() {
-                                              _votes.add(Image.memory(value));
-                                              _vote = Image.memory(value);
+                                              _backgrounds
+                                                  .add(Image.memory(value));
+                                              _background = Image.memory(value);
                                             });
                                           }
                                         });

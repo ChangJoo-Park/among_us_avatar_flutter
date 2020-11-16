@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:among_us_profile_maker/translations.dart';
 import 'package:o_color_picker/o_color_picker.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
 class CustomLayerEditor extends StatefulWidget {
@@ -15,9 +18,11 @@ class CustomLayerEditor extends StatefulWidget {
 class CustomLayerEditorState extends State<CustomLayerEditor> {
   GlobalKey _globalKey = GlobalKey();
   Color _customColor = Colors.black;
+  Color _backgroundColor = Colors.white;
   int _stroke = 0;
-  List<double> _items = <double>[5, 10, 15, 20, 25, 30];
+  List<double> _items = <double>[3, 5, 7, 9, 11, 13, 15];
   List<DrawingPoints> points = <DrawingPoints>[];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,48 +32,55 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
         actions: [
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: () {},
+            onPressed: () async {
+              RenderRepaintBoundary boundary =
+                  _globalKey.currentContext.findRenderObject();
+              ui.Image image = await boundary.toImage();
+              ByteData byteData =
+                  await image.toByteData(format: ui.ImageByteFormat.png);
+              Uint8List pngBytes = byteData.buffer.asUint8List();
+              Navigator.of(context).pop(pngBytes);
+            },
           )
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 16),
-          Center(
-            child: Stack(
-              children: [
-                GestureDetector(
-                  onPanUpdate: (details) {
-                    setState(() {
-                      RenderBox renderBox = context.findRenderObject();
-                      points.add(DrawingPoints(
-                          points:
-                              renderBox.globalToLocal(details.localPosition),
-                          paint: Paint()
-                            ..strokeCap = StrokeCap.round
-                            ..isAntiAlias = true
-                            ..color = _customColor
-                            ..strokeWidth = _stroke.toDouble()));
-                    });
-                  },
-                  onPanStart: (details) {
-                    setState(() {
-                      RenderBox renderBox = context.findRenderObject();
-                      points.add(DrawingPoints(
-                          points:
-                              renderBox.globalToLocal(details.localPosition),
-                          paint: Paint()
-                            ..strokeCap = StrokeCap.round
-                            ..isAntiAlias = true
-                            ..color = _customColor
-                            ..strokeWidth = _stroke.toDouble()));
-                    });
-                  },
-                  onPanEnd: (details) {
-                    setState(() => points.add(null));
-                  },
-                  child: RepaintBoundary(
-                    key: _globalKey,
+      body: Stack(children: [
+        Column(
+          children: [
+            SizedBox(height: 16),
+            Center(
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    onPanUpdate: (details) {
+                      setState(() {
+                        RenderBox renderBox = context.findRenderObject();
+                        points.add(DrawingPoints(
+                            points:
+                                renderBox.globalToLocal(details.localPosition),
+                            paint: Paint()
+                              ..strokeCap = StrokeCap.round
+                              ..isAntiAlias = true
+                              ..color = _customColor
+                              ..strokeWidth = _stroke.toDouble()));
+                      });
+                    },
+                    onPanStart: (details) {
+                      setState(() {
+                        RenderBox renderBox = context.findRenderObject();
+                        points.add(DrawingPoints(
+                            points:
+                                renderBox.globalToLocal(details.localPosition),
+                            paint: Paint()
+                              ..strokeCap = StrokeCap.round
+                              ..isAntiAlias = true
+                              ..color = _customColor
+                              ..strokeWidth = _stroke.toDouble()));
+                      });
+                    },
+                    onPanEnd: (details) {
+                      setState(() => points.add(null));
+                    },
                     child: Container(
                       width: 250,
                       height: 250,
@@ -76,81 +88,123 @@ class CustomLayerEditorState extends State<CustomLayerEditor> {
                         color: Colors.transparent,
                         border: Border.all(),
                       ),
-                      child: ClipRRect(
-                        child: CustomPaint(
-                          key: UniqueKey(),
-                          isComplex: true,
-                          willChange: true,
-                          painter: DrawingPainter(pointsList: points),
+                      child: RepaintBoundary(
+                        key: _globalKey,
+                        child: ClipRRect(
+                          child: Container(
+                            color: _backgroundColor,
+                            child: CustomPaint(
+                              key: UniqueKey(),
+                              isComplex: true,
+                              willChange: true,
+                              painter: DrawingPainter(pointsList: points),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-          Expanded(
-            flex: 1,
-            child: SingleChildScrollView(
-                child: Container(
-              child: Column(
-                children: [
-                  // 커스텀 컬러
-                  Text(Translations.of(context).trans('custom_text_color')),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(width: 40, height: 40, color: _customColor),
-                        SizedBox(width: 16),
-                        RaisedButton.icon(
-                          icon: Icon(Icons.palette),
-                          textColor: Colors.black,
-                          label: Text('Change Color'),
-                          onPressed: () => showDialog<void>(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              content: OColorPicker(
-                                selectedColor: _customColor,
-                                colors: primaryColorsPalette,
-                                onColorChange: (color) {
-                                  setState(() => _customColor = color);
-                                  Navigator.of(context).pop();
-                                },
+            SizedBox(height: 16),
+            Expanded(
+              flex: 1,
+              child: SingleChildScrollView(
+                  child: Container(
+                child: Column(
+                  children: [
+                    // 커스텀 컬러
+                    Text(Translations.of(context).trans('custom_text_color')),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(width: 40, height: 40, color: _customColor),
+                          SizedBox(width: 16),
+                          RaisedButton.icon(
+                            icon: Icon(Icons.palette),
+                            textColor: Colors.black,
+                            label: Text('Change Color'),
+                            onPressed: () => showDialog<void>(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                content: OColorPicker(
+                                  selectedColor: _customColor,
+                                  colors: primaryColorsPalette,
+                                  onColorChange: (color) {
+                                    setState(() => _customColor = color);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Text('두께'),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: _items.asMap().entries.map((entry) {
-                        return _StrokeButton(
-                          key: ValueKey('STROKE_BUTTON_${entry.value}'),
-                          stroke: entry.value,
-                          color: _customColor,
-                          selected: _stroke == entry.key,
-                          onTap: () {
-                            setState(() => _stroke = entry.key);
-                          },
-                        );
-                      }).toList(),
+                    Text('배경색'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              foregroundDecoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(),
+                              ),
+                              width: 40,
+                              height: 40,
+                              color: _backgroundColor),
+                          SizedBox(width: 16),
+                          RaisedButton.icon(
+                            icon: Icon(Icons.palette),
+                            textColor: Colors.black,
+                            label: Text('Change Background Color'),
+                            onPressed: () => showDialog<void>(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                content: OColorPicker(
+                                  selectedColor: _backgroundColor,
+                                  colors: primaryColorsPalette,
+                                  onColorChange: (color) {
+                                    setState(() => _backgroundColor = color);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )),
-          ),
-        ],
-      ),
+                    Text('두께'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: _items.asMap().entries.map((entry) {
+                          return _StrokeButton(
+                            key: ValueKey('STROKE_BUTTON_${entry.value}'),
+                            stroke: entry.value,
+                            color: _customColor,
+                            selected: _stroke == entry.key,
+                            onTap: () {
+                              setState(() => _stroke = entry.key);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 }
