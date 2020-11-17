@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:among_us_profile_maker/view/custom_layer_editor.dart';
 import 'package:http/http.dart' as http;
 
@@ -212,80 +211,80 @@ class _MakerViewState extends State<MakerView>
 
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        title: Text('Amoung Us Avatar'),
-        backgroundColor: Colors.black87,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.casino),
-            onPressed: () {
-              _selectRandomAvatar(all: true);
-            },
-          ),
-          IconButton(
-              icon: Icon(Icons.share),
-              onPressed: () async {
-                try {
-                  RenderRepaintBoundary boundary =
-                      _globalKey.currentContext.findRenderObject();
-                  ui.Image image = await boundary.toImage();
-                  ByteData byteData =
-                      await image.toByteData(format: ui.ImageByteFormat.png);
-                  showDialog(
-                    context: context,
-                    child: AlertDialog(
-                      content: Container(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.memory(byteData.buffer.asUint8List()),
-                            Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                initialValue:
-                                    Translations.of(scaffoldKey.currentContext)
-                                        .trans('default_dialog_text'),
-                                onSaved: (value) {
-                                  setState(() {
-                                    shareMessage = value;
-                                  });
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      actions: [
-                        FlatButton.icon(
-                          icon: Icon(Icons.save),
-                          label: Text(Translations.of(context).trans('save')),
-                          onPressed: () async {
-                            await save(byteData, context);
-                          },
-                        ),
-                        FlatButton.icon(
-                          icon: Icon(Icons.share),
-                          label: Text(Translations.of(context).trans('share')),
-                          onPressed: () async {
-                            await _share(byteData, context);
-                          },
-                        ),
-                        FlatButton.icon(
-                          icon: Icon(Icons.cloud_circle),
-                          label: Text(Translations.of(context).trans('feed')),
-                          onPressed: () async {
-                            await _feed(context, byteData);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                } catch (e) {
-                  print(e);
-                }
-              }),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text('Amoung Us Avatar'),
+      //   backgroundColor: Colors.black87,
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.casino),
+      //       onPressed: () {
+      //         _selectRandomAvatar(all: true);
+      //       },
+      //     ),
+      //     IconButton(
+      //         icon: Icon(Icons.share),
+      //         onPressed: () async {
+      //           try {
+      //             RenderRepaintBoundary boundary =
+      //                 _globalKey.currentContext.findRenderObject();
+      //             ui.Image image = await boundary.toImage();
+      //             ByteData byteData =
+      //                 await image.toByteData(format: ui.ImageByteFormat.png);
+      //             showDialog(
+      //               context: context,
+      //               child: AlertDialog(
+      //                 content: Container(
+      //                   child: Column(
+      //                     mainAxisSize: MainAxisSize.min,
+      //                     children: [
+      //                       Image.memory(byteData.buffer.asUint8List()),
+      //                       Form(
+      //                         key: _formKey,
+      //                         child: TextFormField(
+      //                           initialValue:
+      //                               Translations.of(scaffoldKey.currentContext)
+      //                                   .trans('default_dialog_text'),
+      //                           onSaved: (value) {
+      //                             setState(() {
+      //                               shareMessage = value;
+      //                             });
+      //                           },
+      //                         ),
+      //                       )
+      //                     ],
+      //                   ),
+      //                 ),
+      //                 actions: [
+      //                   FlatButton.icon(
+      //                     icon: Icon(Icons.save),
+      //                     label: Text(Translations.of(context).trans('save')),
+      //                     onPressed: () async {
+      //                       await save(byteData, context);
+      //                     },
+      //                   ),
+      //                   FlatButton.icon(
+      //                     icon: Icon(Icons.share),
+      //                     label: Text(Translations.of(context).trans('share')),
+      //                     onPressed: () async {
+      //                       await _share(byteData, context);
+      //                     },
+      //                   ),
+      //                   FlatButton.icon(
+      //                     icon: Icon(Icons.cloud_circle),
+      //                     label: Text(Translations.of(context).trans('feed')),
+      //                     onPressed: () async {
+      //                       await _feed(context, byteData);
+      //                     },
+      //                   ),
+      //                 ],
+      //               ),
+      //             );
+      //           } catch (e) {
+      //             print(e);
+      //           }
+      //         }),
+      //   ],
+      // ),
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:among_us_profile_maker/analytics.dart';
-import 'package:among_us_profile_maker/translations.dart';
 import 'package:among_us_profile_maker/view/maker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +8,6 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:store_redirect/store_redirect.dart';
 
 class FeedView extends StatefulWidget {
   FeedView({key}) : super(key: key);
@@ -25,19 +23,19 @@ class _FeedViewState extends State<FeedView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black87,
-      appBar: AppBar(
-        title: Text(Translations.of(context).trans('avatars_from_users')),
-        backgroundColor: Colors.black87,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.star_rate),
-            onPressed: () {
-              StoreRedirect.redirect();
-              analytics.logEvent(name: 'store_redirect');
-            },
-          )
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text(Translations.of(context).trans('avatars_from_users')),
+      //   backgroundColor: Colors.black87,
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.star_rate),
+      //       onPressed: () {
+      //         StoreRedirect.redirect();
+      //         analytics.logEvent(name: 'store_redirect');
+      //       },
+      //     )
+      //   ],
+      // ),
       body: RefreshIndicator(
         onRefresh: () async {
           refreshChangeListener.refreshed = true;
@@ -75,8 +73,7 @@ class _FeedViewState extends State<FeedView> {
                         children: [
                           FlatButton.icon(
                             icon: Icon(Icons.share),
-                            label:
-                                Text(Translations.of(context).trans('share')),
+                            label: Text("SHRE"),
                             onPressed: () async {
                               try {
                                 File file = await urlToFile(item['url']);
