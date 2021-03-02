@@ -1,16 +1,7 @@
-# among_us_profile_maker
+# 어몽어스 아바타 생성기
 
-A new Flutter project.
+![](image.jpg)
 
-## Getting Started
+이 프로젝트는 Google Play에 의해 중단되었습니다. 
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+코드 참고용으로만 공개합니다
